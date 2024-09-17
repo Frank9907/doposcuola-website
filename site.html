@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOPOSCUOLA - Gestione Dati</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            background-image: url(''); /* Immagine di sfondo di default */
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s, font-family 0.3s, font-size 0.3s, background-image 0.3s;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="date"], input[type="tel"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .data-display {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .record {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .record-separator {
+            border-top: 1px dashed #ccc;
+            margin: 10px 0;
+        }
+
+        .order-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .order-buttons button {
+            width: 48%;
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 20px;
+            right: -300px; /* Nascondi il pannello inizialmente */
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s;
+        }
+
+        .settings-panel.open {
+            right: 20px; /* Mostra il pannello quando è aperto */
+        }
+
+        .settings-panel label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .settings-panel select, .settings-panel input[type="color"], .settings-panel input[type="file"], .settings-panel input[type="range"], .settings-panel input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .menu-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .settings-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .settings-buttons button {
+            width: 48%;
+        }
+
+        .record-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .record-actions button {
+            margin-left: 5px;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .record-actions button.delete {
+            background-color: #dc3545;
+        }
+
+        .record-actions button.edit {
+            background-color: #17a2b8;
+        }
+
+        .editable {
+            cursor: pointer;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <i class="fas fa-cog menu-icon" id="menuIcon"></i>
+
+    <h1>DOPOSCUOLA - Gestione Dati</h1>
+
+    <div class="counter">
+        <p><strong>Numero Bambini:</strong> <span id="counter">0</span></p>
+    </div>
+
+    <form id="dataForm">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" name="nome" placeholder="Inserisci il tuo nome" required>
+
+        <label for="cognome">Cognome</label>
+        <input type="text" id="cognome" name="cognome" placeholder="Inserisci il tuo cognome" required>
+
+        <label for="data_pagamento">Data di Pagamento</label>
+        <input type="date" id="data_pagamento" name="data_pagamento" required>
+
+        <label for="scadenza_opzioni">Opzione Data di Scadenza</label>
+        <select id="scadenza_opzioni">
+            <option value="">Manuale</option>
+            <option value="7">1 settimana</option>
+            <option value="15">15 giorni</option>
+            <option value="30">1 mese</option>
+        </select>
+
+        <label for="data_scadenza">Data di Scadenza</label>
+        <input type="date" id="data_scadenza" name="data_scadenza">
+
+        <label for="telefono">Numero di Telefono</label>
+        <input type="tel" id="telefono" name="telefono" placeholder="Inserisci il numero di telefono" pattern="[0-9]{10}" required>
+
+        <label for="note">Note (opzionale)</label>
+        <textarea id="note" name="note" placeholder="Inserisci eventuali note"></textarea>
+
+        <button type="submit" id="saveButton">Salva Dati</button>
+    </form>
+
+    <div class="order-buttons">
+        <button id="sortNameButton">Ordina per Nome</button>
+        <button id="sortScadenzaButton">Ordina per Data di Scadenza</button>
+    </div>
+
+    <div class="data-display">
+        <h2>Dati Salvati</h2>
+        <div id="savedDataList"></div>
+    </div>
+
+    <div class="settings-panel" id="settingsPanel">
+        <h3>Impostazioni</h3>
+        <label for="background_color">Colore di Sfondo</label>
+        <input type="color" id="background_color" value="#f0f0f0">
+
+        <label for="text_color">Colore del Testo</label>
+        <input type="color" id="text_color" value="#000000">
+
+        <label for="button_color">Colore Pulsanti</label>
+        <input type="color" id="button_color" value="#28a745">
+
+        <label for="font_family">Tipo di Carattere</label>
+        <select id="font_family">
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+        </select>
+
+        <label for="font_size">Dimensione Carattere</label>
+        <select id="font_size">
+            <option value="12px">12px</option>
+            <option value="14px">14px</option>
+            <option value="16px">16px</option>
+            <option value="18px">18px</option>
+            <option value="20px">20px</option>
+        </select>
+
+        <label for="separator_thickness">Spessore Separatore</label>
+        <input type="range" id="separator_thickness" min="1" max="10" value="1" step="1">
+
+        <label for="background_image">Carica Sfondo</label>
+        <input type="file" id="background_image" accept="image/*">
+
+        <label for="interface_color">Colore Interfaccia</label>
+        <input type="color" id="interface_color" value="#ffffff">
+
+        <div class="settings-buttons">
+            <button id="saveSettingsButton">Salva Impostazioni</button>
+            <button id="resetSettingsButton">Resetta</button>
+        </div>
+    </div>
+
+    <script>
+        let savedData = [];
+        const savedDataList = document.getElementById('savedDataList');
+        const counter = document.getElementById('counter');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const menuIcon = document.getElementById('menuIcon');
+        const backgroundColorInput = document.getElementById('background_color');
+        const textColorInput = document.getElementById('text_color');
+        const buttonColorInput = document.getElementById('button_color');
+        const fontFamilySelect = document.getElementById('font_family');
+        const fontSizeSelect = document.getElementById('font_size');
+        const separatorThicknessInput = document.getElementById('separator_thickness');
+        const backgroundImageInput = document.getElementById('background_image');
+        const interfaceColorInput = document.getElementById('interface_color');
+        const dataScadenzaInput = document.getElementById('data_scadenza');
+        const opzioniScadenzaSelect = document.getElementById('scadenza_opzioni');
+
+        function updateDataDisplay() {
+            savedDataList.innerHTML = '';
+            savedData.forEach((data, index) => {
+                const record = document.createElement('div');
+                record.className = 'record';
+                record.innerHTML = `
+                    <p><strong>Nome:</strong> ${data.nome}</p>
+                    <p><strong>Cognome:</strong> ${data.cognome}</p>
+                    <p><strong>Data di Pagamento:</strong> ${new Date(data.data_pagamento).toLocaleDateString('it-IT')}</p>
+                    <p><strong>Data di Scadenza:</strong> ${new Date(data.data_scadenza).toLocaleDateString('it-IT')}</p>
+                    <p><strong>Numero di Telefono:</strong> ${data.telefono}</p>
+                    <p><strong>Note:</strong> ${data.note}</p>
+                    <div class="record-actions">
+                        <button class="edit" onclick="editData(${index})">Modifica</button>
+                        <button class="delete" onclick="deleteData(${index})">Elimina</button>
+                    </div>
+                    <div class="record-separator" style="border-top-width: ${separatorThicknessInput.value}px;"></div>
+                `;
+                savedDataList.appendChild(record);
+            });
+            counter.textContent = savedData.length;
+        }
+
+        function saveData(event) {
+            event.preventDefault();
+            const data = {
+                nome: document.getElementById('nome').value,
+                cognome: document.getElementById('cognome').value,
+                data_pagamento: document.getElementById('data_pagamento').value,
+                data_scadenza: dataScadenzaInput.value || calculateScadenza(),
+                telefono: document.getElementById('telefono').value,
+                note: document.getElementById('note').value
+            };
+            savedData.push(data);
+            updateDataDisplay();
+            document.getElementById('dataForm').reset();
+        }
+
+        function calculateScadenza() {
+            const dataPagamento = new Date(document.getElementById('data_pagamento').value);
+            const opzioneScadenza = document.getElementById('scadenza_opzioni').value;
+            if (opzioneScadenza) {
+                dataPagamento.setDate(dataPagamento.getDate() + parseInt(opzioneScadenza));
+                return dataPagamento.toISOString().split('T')[0];
+            }
+            return '';
+        }
+
+        function updateScadenza() {
+            dataScadenzaInput.value = calculateScadenza();
+        }
+
+        function sortDataByName() {
+            savedData.sort((a, b) => a.nome.toLowerCase().localeCompare(b.nome.toLowerCase()));
+            updateDataDisplay();
+        }
+
+        function sortDataByScadenza() {
+            savedData.sort((a, b) => new Date(a.data_scadenza) - new Date(b.data_scadenza));
+            updateDataDisplay();
+        }
+
+        function saveSettings() {
+            document.body.style.backgroundColor = backgroundColorInput.value;
+            document.body.style.color = textColorInput.value;
+            document.querySelectorAll('button').forEach(button => {
+                button.style.backgroundColor = buttonColorInput.value;
+            });
+            document.body.style.fontFamily = fontFamilySelect.value;
+            document.body.style.fontSize = fontSizeSelect.value;
+            const separatorThickness = separatorThicknessInput.value;
+            document.querySelectorAll('.record-separator').forEach(separator => {
+                separator.style.borderTopWidth = `${separatorThickness}px`;
+            });
+            if (backgroundImageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.body.style.backgroundImage = `url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(backgroundImageInput.files[0]);
+            }
+            document.querySelectorAll('.data-display').forEach(display => {
+                display.style.backgroundColor = interfaceColorInput.value;
+            });
+        }
+
+        function resetSettings() {
+            document.body.style.backgroundColor = '#f0f0f0';
+            document.body.style.color = '#000000';
+            document.querySelectorAll('button').forEach(button => {
+                button.style.backgroundColor = '#28a745';
+            });
+            document.body.style.fontFamily = 'Arial';
+            document.body.style.fontSize = '16px';
+            document.querySelectorAll('.record-separator').forEach(separator => {
+                separator.style.borderTopWidth = '1px';
+            });
+            document.body.style.backgroundImage = '';
+            document.querySelectorAll('.data-display').forEach(display => {
+                display.style.backgroundColor = '#fff';
+            });
+        }
+
+        function editData(index) {
+            const data = savedData[index];
+            document.getElementById('nome').value = data.nome;
+            document.getElementById('cognome').value = data.cognome;
+            document.getElementById('data_pagamento').value = data.data_pagamento;
+            document.getElementById('data_scadenza').value = data.data_scadenza;
+            document.getElementById('telefono').value = data.telefono;
+            document.getElementById('note').value = data.note;
+            savedData.splice(index, 1);
+            updateDataDisplay();
+        }
+
+        function deleteData(index) {
+            savedData.splice(index, 1);
+            updateDataDisplay();
+        }
+
+        function toggleSettingsPanel() {
+            settingsPanel.classList.toggle('open');
+        }
+
+        backgroundColorInput.addEventListener('change', saveSettings);
+        textColorInput.addEventListener('change', saveSettings);
+        buttonColorInput.addEventListener('change', saveSettings);
+        fontFamilySelect.addEventListener('change', saveSettings);
+        fontSizeSelect.addEventListener('change', saveSettings);
+        separatorThicknessInput.addEventListener('input', saveSettings);
+        backgroundImageInput.addEventListener('change', saveSettings);
+        interfaceColorInput.addEventListener('change', saveSettings);
+
+        document.getElementById('dataForm').addEventListener('submit', saveData);
+        document.getElementById('sortNameButton').addEventListener('click', sortDataByName);
+        document.getElementById('sortScadenzaButton').addEventListener('click', sortDataByScadenza);
+        document.getElementById('saveSettingsButton').addEventListener('click', saveSettings);
+        document.getElementById('resetSettingsButton').addEventListener('click', resetSettings);
+        menuIcon.addEventListener('click', toggleSettingsPanel);
+        opzioniScadenzaSelect.addEventListener('change', updateScadenza);
+    </script>
+</body>
+</html>
